@@ -1,722 +1,298 @@
-#include <Servo.h>
-#include <Arduino.h>
-#include <LiquidCrystal_I2C.h>
-
-LiquidCrystal_I2C lcd(0x27, 16, 2);
-
-int grip1_pos0 = 24;
-int grip2_pos0 = 29;
-int grip3_pos0 = 31;
-int grip4_pos0 = 20-10-5;
-
-Servo myservo1; 
-Servo myservo2;
-Servo myservo3;
-Servo myservo4;
-Servo myservo5;
-Servo myservo6;
-Servo myservo7;
-Servo myservo8;
-int pos = 0;
-
-const int buttonPin = 10;
-int buttonState = HIGH;
-int lastButtonState = HIGH;
-int patternNumber = 1;
-
-void setup(){
-  lcd.init();
-  lcd.backlight();
-  Serial.begin(115200);
-  myservo1.attach(2);
-  myservo2.attach(3);
-  myservo3.attach(4);
-  myservo4.attach(5);
-  myservo5.attach(6);
-  myservo6.attach(7);
-  myservo7.attach(8);
-  myservo8.attach(9);
-  
-  myservo1.write(25+10);
-  myservo2.write(25);
-  myservo3.write(25+10);
-  myservo4.write(25);
-  myservo5.write(grip1_pos0);
-  myservo6.write(grip2_pos0);
-  myservo7.write(grip3_pos0);
-  myservo8.write(grip4_pos0);
-
-  lcd.print("Initializing...");
-  delay(800);
-  lcd.clear();
-
-  lcd.setCursor(0, 0);
-  lcd.print("Varun");
-  lcd.setCursor(0, 1);
-  lcd.print("2023UEC2506");
-  delay(1000);
-  lcd.clear();
-
-  lcd.setCursor(0, 0);
-  lcd.print("Jayavardhan");
-  lcd.setCursor(0, 1);
-  lcd.print("2023UEC2531");
-  delay(1100);
-  lcd.clear();
-
-  lcd.setCursor(0, 0);
-  lcd.print("Utpal");
-  lcd.setCursor(0, 1);
-  lcd.print("2023UEC2534");
-  delay(1000);
-  lcd.clear();
-
-  lcd.print("Rubik's Cube");
-  lcd.setCursor(0, 1);
-  lcd.print("Controller Robot");
-  delay(1000);
-  lcd.clear();
-
-  lcd.print("Waiting for input...");
-  pinMode(buttonPin, INPUT_PULLUP);  
-}
-
-
-void arm1_front(){
-  myservo1.write(25+10);
-  delay(500);
-}
-void arm1_back() {
-  myservo1.write(90);
-  delay(500);
-}
-
-void arm2_front(){
-  myservo2.write(25);
-  delay(500);
-}
-void arm2_back() {
-  myservo2.write(70);
-  delay(500);
-}
-
-void arm3_front(){
-  myservo3.write(25+10);
-  delay(500);
-}
-void arm3_back() {
-  myservo3.write(90);
-  delay(500);
-}
-
-void arm4_front(){
-  myservo4.write(25);
-  delay(500);
-}
-void arm4_back() {
-  myservo4.write(90);
-  delay(500);
-}
-
-void expand(){
-  myservo1.write(150);
-  delay(100);
-  myservo2.write(150);
-  delay(100);
-  myservo3.write(150);
-  delay(100);
-  myservo4.write(150);
-  delay(100);
-}
-
-void hold1() {
-  arm1_front();
-  arm3_front();
-  delay(1000);
-  arm2_back();
-  arm4_back();
-  delay(500);
-}
-
-void hold2() {
-  arm2_back();
-  arm4_back();
-  delay(1000);
-  arm1_back();
-  arm3_back();
-  delay(500);
-  }
-
-void hold_all() {
-  arm1_front();
-  arm3_front();
-  delay(3000);
-  arm2_front();
-  arm4_front();
-  }
-
-
-void check_arm1(){
-for(int i=0;i<=5;i++){
-  arm1_back();
-  delay(1000);
-  arm1_front();
-  delay(1000); 
-}
-}
-
-void check_arm2(){
-  for(int i=0;i<=5;i++){
-    arm2_back();
-  delay(1000);
-  arm2_front();
-  delay(1000);
-  }
-}
-
-void check_arm3(){
-  for(int i=0;i<=5;i++){
-    arm3_back();
-  delay(1000);
-  arm3_front();
-  delay(1000);
-  }
-}
-
-void check_arm4(){
-  for(int i=0;i<=5;i++){
-    arm4_back();
-  delay(1000);
-  arm4_front();
-  delay(1000);
-  }
-}
-
-void check_all_arm(){
-arm1_back();
-delay(1000);
-arm1_front();
-delay(1000);
-arm2_back();
-delay(1000);
-arm2_front();
-delay(1000);
-arm3_back();
-delay(1000);
-arm3_front();
-delay(1000);
-arm4_back();
-delay(1000);
-arm4_front();
-delay(1000);
-}
-
-//grip 1 horizontal mean position
-void grip_1_clock(){
-  arm1_back();
-  myservo5.write(122);
-  delay(500);
-}
-
-//grip 1 vertical mean position
-void grip_1_anticlock(){
-  arm1_back();
-  myservo5.write(24);
-  delay(500);
-}
-
-void grip_1_adjust(){
-  grip_1_anticlock();
-  arm1_front();
-}
-
-void front_clock(){
-  grip_1_adjust();
-  myservo5.write(133-10);//grip 1 clock rotation
-  delay(1000);
-  grip_1_adjust();
-}
-
-void front_anticlock(){
-  grip_1_clock();
-  arm1_front();
-  myservo5.write(18);//grip 1 anticlock rotation
-  delay(1000);
-  grip_1_adjust();
-}
-
-void front_clock_twice(){
-  front_clock();
-  delay(500);
-  front_clock();
-  delay(500);
-}
-
-void front_anticlock_twice(){
-  front_anticlock();
-  delay(500);
-  front_anticlock();
-  delay(500);
-}
-
-
-
-//grip 2 horizontal mean position
-void grip_2_clock(){
-  arm2_back();
-  myservo6.write(128);
-  delay(500);
-}
-
-//grip 2 vertical mean position
-void grip_2_anticlock(){
-  arm2_back();
-  myservo6.write(29);
-  delay(500);
-}
-
-void grip_2_adjust(){
-  grip_2_anticlock();
-  arm2_front();
-}
-
-void left_down(){
-  grip_2_adjust();
-  myservo6.write(139-15);//grip 2 clock rotation
-  delay(1000);
-  grip_2_adjust();
-}
-
-void left_up(){
-  grip_2_clock();
-  arm2_front();
-  myservo6.write(20);//grip 2 anticlock rotation
-  delay(1000);
-  grip_2_adjust();
-}
-
-void left_up_twice(){
-  left_up();
-  delay(500);
-  left_up();
-  delay(500);
-}
-
-void left_down_twice(){
-  left_down();
-  delay(500);
-  left_down();
-  delay(500);
-}
-
-
-//grip 3 horizontal mean position
-void grip_3_clock(){
-  arm3_back();
-  myservo7.write(126);
-  delay(500);
-}
-
-//grip 3 vertical mean position
-void grip_3_anticlock(){
-  arm3_back();
-  myservo7.write(31);
-  delay(500);
-}
-
-void grip_3_adjust(){
-  grip_3_anticlock();
-  arm3_front();
-}
-
-void back_clock(){
-  grip_3_adjust();
-  myservo7.write(137-15);//grip 3 clock rotation
-  delay(1000);
-  grip_3_adjust();
-}
-
-void back_anticlock(){
-  grip_3_clock();
-  arm3_front();
-  myservo7.write(24);//grip 3 anticlock rotation
-  delay(1000);
-  grip_3_adjust();
-}
-
-void back_clock_twice(){
-  back_clock();
-  delay(500);
-  back_clock();
-  delay(500);
-}
-
-void back_anticlock_twice(){
-  back_anticlock();
-  delay(500);
-  back_anticlock();
-  delay(500);
-}
-
-
-//grip 4 horizontal mean position
-void grip_4_clock(){
-  arm4_back();
-  myservo8.write(118);
-  delay(500);
-}
-
-//grip 4 vertical mean position
-void grip_4_anticlock(){
-  arm4_back();
-  myservo8.write(20-10-5);
-  delay(500);
-}
-
-void grip_4_adjust(){
-  grip_4_anticlock();
-  arm4_front();
-}
-
-void right_up(){
-  grip_4_adjust();
-  myservo8.write(132-22);//grip 4 clock rotation
-  delay(1000);
-  grip_4_adjust();
-}
-
-void right_down(){
-  grip_4_clock();
-  arm4_front();
-  myservo8.write(12);//grip 4 anticlock rotation
-  delay(1000);
-  grip_4_adjust();
-}
-
-void right_up_twice(){
-  right_up();
-  delay(500);
-  right_up();
-  delay(500);
-}
-
-void right_down_twice(){
-  right_down();
-  delay(500);
-  right_down();
-  delay(500);
-}
-
-
-void rotate_cube_clock(){
-  grip_3_clock();
-  arm3_front();
-  
-  arm2_back();
-  arm4_back();
-   
-  myservo7.write(32);
-  myservo5.write(120);
-  delay(500); 
-  
-  myservo2.write(30);
-  delay(500);
-  myservo4.write(30);
-  delay(500);
-  
-  grip_1_adjust();
-  grip_3_adjust();
-  grip_2_adjust();
-  grip_4_adjust();
- }
-
-void rotate_cube_anticlock(){
-  grip_1_clock();
-  arm1_front();
-  
-  arm2_back();
-  arm4_back(); 
-
-  myservo5.write(26);
-  myservo7.write(134);
-  delay(500);
-
-  myservo2.write(30);
-  delay(500);
-  myservo4.write(30);
-  delay(500);
-  
-  grip_1_adjust();
-  grip_3_adjust();
-  grip_2_adjust();
-  grip_4_adjust();    
-}
-
-
-
-void up_clock(){
-  rotate_cube_clock();
-  delay(500);
-  right_up();
-  delay(500);
-  rotate_cube_anticlock();
-  delay(500);
-}
-
-void up_clock_twice(){
-  rotate_cube_clock();
-  delay(500);
-  right_up();
-  delay(1000);
-  right_up();
-  delay(500);
-  rotate_cube_anticlock();
-  delay(500);
-}
-
-
-void up_anticlock(){
-  rotate_cube_clock();
-  delay(500);
-  right_down();
-  delay(500);
-  rotate_cube_anticlock();
-  delay(500);
-}
-
-void up_anticlock_twice(){
-  rotate_cube_clock();
-  delay(500);
-  right_down();
-  delay(1000);
-  right_down();
-  delay(500);
-  rotate_cube_anticlock();
-  delay(500);
-}
-
-
-
-void down_clock(){
-  rotate_cube_clock();
-  delay(500);
-  left_down();
-  delay(500);
-  rotate_cube_anticlock();
-  delay(500);
-}
-
-void down_clock_twice(){
-  rotate_cube_clock();
-  delay(500);
-  left_down();
-  delay(1000);
-  left_down();
-  delay(500);
-  rotate_cube_anticlock();
-  delay(500);
-}
-
-
-void down_anticlock(){
-  rotate_cube_clock();
-  delay(500);
-  left_up();
-  delay(500);
-  rotate_cube_anticlock();
-  delay(500);
-}
-
-void down_anticlock_twice(){
-  rotate_cube_clock();
-  delay(500);
-  left_up();
-  delay(1000);
-  left_up();
-  delay(500);
-  rotate_cube_anticlock();
-  delay(500);
-}
-
-
-void adjust_all(){
-  grip_1_adjust();
-  grip_2_adjust();
-  grip_3_adjust();
-  grip_4_adjust();
-}
-
-void complete_check(){
-  front_clock();
-  delay(500);
-  front_anticlock();
-  delay(500);
-
-  left_up();
-  delay(500);
-  left_down();
-  delay(500);
-
-  back_clock();
-  delay(500);
-  back_anticlock();
-  delay(500);
-
-  right_up();
-  delay(500);
-  right_down();
-  delay(500);
-
-  up_clock_twice();
-  delay(500);
-  up_anticlock_twice();
-  delay(500);
-
-  down_clock_twice();
-  delay(500);
-  down_anticlock_twice();
-  delay(500);
-}
-
-
-
-
- void execute(String form) {
-  form.trim();              
-  form.replace("\r", "");   
-  form.replace("\n", "");   
-
-  Serial.print("Processing command: ");
-  Serial.println(form);
-
-  if (form == "front_clock") {
-    front_clock();
-  } else if (form == "front_anticlock") {
-    front_anticlock();
-  } else if (form == "front_clock_twice") {
-    front_clock_twice();
-  } else if (form == "front_anticlock_twice") {
-    front_anticlock_twice();
-  } else if (form == "left_down") {
-    left_down();
-  } else if (form == "left_up") {
-    left_up();
-  } else if (form == "left_down_twice") {
-    left_down_twice();
-  } else if (form == "left_up_twice") {
-    left_up_twice();
-  } else if (form == "back_clock") {
-    back_clock();
-  } else if (form == "back_anticlock") {
-    back_anticlock();
-  } else if (form == "back_clock_twice") {
-    back_clock_twice();
-  } else if (form == "back_anticlock_twice") {
-    back_anticlock_twice();
-  } else if (form == "right_up") {
-    right_up();
-  } else if (form == "right_down") {
-    right_down();
-  } else if (form == "right_up_twice") {
-    right_up_twice();
-  } else if (form == "right_down_twice") {
-    right_down_twice();
-  } else if (form == "up_clock") {
-    up_clock();
-  } else if (form == "up_clock_twice") {
-    up_clock_twice();
-  } else if (form == "up_anticlock") {
-    up_anticlock();
-  } else if (form == "up_anticlock_twice") {
-    up_anticlock_twice();
-  } else if (form == "down_clock") {
-    down_clock();
-  } else if (form == "down_clock_twice") {
-    down_clock_twice();
-  } else if (form == "down_anticlock") {
-    down_anticlock();
-  } else if (form == "down_anticlock_twice") {
-    down_anticlock_twice();
-  } else if (form == "complete_check") {
-    complete_check();}
-    else if(form=="adjust_all"){
-      adjust_all();
+import cv2
+import numpy as np
+import kociemba as Cube
+import time
+time.sleep(2)
+print("Please scan the side according to their centre's colour in preview window ")
+
+state=  {
+            'up':['white','white','white','white','white','white','white','white','white',],
+            'right':['white','white','white','white','white','white','white','white','white',],
+            'front':['white','white','white','white','white','white','white','white','white',],
+            'down':['white','white','white','white','white','white','white','white','white',],
+            'left':['white','white','white','white','white','white','white','white','white',],
+            'back':['white','white','white','white','white','white','white','white','white',]
+        }
+
+sign_conv={
+            'green'  : 'F',
+            'white'  : 'U',
+            'blue'   : 'B',
+            'red'    : 'R',
+            'orange' : 'L',
+            'yellow' : 'D'
+          }
+
+color = {
+        'red'    : (0,0,255),
+        'orange' : (0,165,255),
+        'blue'   : (255,0,0),
+        'green'  : (0,255,0),
+        'white'  : (255,255,255),
+        'yellow' : (0,255,255)
+        }
+
+stickers = {
+        'main': [
+            [200, 120], [300, 120], [400, 120],
+            [200, 220], [300, 220], [400, 220],
+            [200, 320], [300, 320], [400, 320]
+        ],
+        'current': [
+            [20, 20], [54, 20], [88, 20],
+            [20, 54], [54, 54], [88, 54],
+            [20, 88], [54, 88], [88, 88]
+        ],
+        'preview': [
+            [20, 130], [54, 130], [88, 130],
+            [20, 164], [54, 164], [88, 164],
+            [20, 198], [54, 198], [88, 198]
+        ],
+        'left': [
+            [50, 280], [94, 280], [138, 280],
+            [50, 324], [94, 324], [138, 324],
+            [50, 368], [94, 368], [138, 368]
+        ],
+        'front': [
+            [188, 280], [232, 280], [276, 280],
+            [188, 324], [232, 324], [276, 324],
+            [188, 368], [232, 368], [276, 368]
+        ],
+        'right': [
+            [326, 280], [370, 280], [414, 280],
+            [326, 324], [370, 324], [414, 324],
+            [326, 368], [370, 368], [414, 368]
+        ],
+        'up': [
+            [188, 128], [232, 128], [276, 128],
+            [188, 172], [232, 172], [276, 172],
+            [188, 216], [232, 216], [276, 216]
+        ],
+        'down': [
+            [188, 434], [232, 434], [276, 434],
+            [188, 478], [232, 478], [276, 478],
+            [188, 522], [232, 522], [276, 522]
+        ], 
+        'back': [
+            [464, 280], [508, 280], [552, 280],
+            [464, 324], [508, 324], [552, 324],
+            [464, 368], [508, 368], [552, 368]
+        ],
+           }
+
+font = cv2.FONT_HERSHEY_SIMPLEX  
+textPoints=  {
+            'up':[['U',242, 202],['W',(255,255,255),260,208]],
+            'right':[['R',380, 354],['R',(0,0,255),398,360]],
+            'front':[['F',242, 354],['G',(0,255,0),260,360]],
+            'down':[['D',242, 508],['Y',(0,255,255),260,514]],
+            'left':[['L',104,354],['O',(0,165,255),122,360]],
+            'back':[['B',518, 354],['B',(255,0,0),536,360]],
+        }
+
+check_state=[]
+solution=[]
+solved=False
+
+cap=cv2.VideoCapture(1)
+cv2.namedWindow('frame')
+
+def rotate(side):
+    main=state[side]
+    front=state['front']
+    left=state['left']
+    right=state['right']
+    up=state['up']
+    down=state['down']
+    back=state['back']
     
-  } else {
-    Serial.println("Unidentified String");
-  }
-}
+    if side=='front':
+        left[2],left[5],left[8],up[6],up[7],up[8],right[0],right[3],right[6],down[0],down[1],down[2]=down[0],down[1],down[2],left[8],left[5],left[2],up[6],up[7],up[8],right[6],right[3],right[0] 
+    elif side=='up':
+        left[0],left[1],left[2],back[0],back[1],back[2],right[0],right[1],right[2],front[0],front[1],front[2]=front[0],front[1],front[2],left[0],left[1],left[2],back[0],back[1],back[2],right[0],right[1],right[2]
+    elif side=='down':
+        left[6],left[7],left[8],back[6],back[7],back[8],right[6],right[7],right[8],front[6],front[7],front[8]=back[6],back[7],back[8],right[6],right[7],right[8],front[6],front[7],front[8],left[6],left[7],left[8]
+    elif side=='back':
+        left[0],left[3],left[6],up[0],up[1],up[2],right[2],right[5],right[8],down[6],down[7],down[8]=up[2],up[1],up[0],right[2],right[5],right[8],down[8],down[7],down[6],left[0],left[3],left[6] 
+    elif side=='left':
+        front[0],front[3],front[6],down[0],down[3],down[6],back[2],back[5],back[8],up[0],up[3],up[6]=up[0],up[3],up[6],front[0],front[3],front[6],down[6],down[3],down[0],back[8],back[5],back[2]
+    elif side=='right':
+        front[2],front[5],front[8],down[2],down[5],down[8],back[0],back[3],back[6],up[2],up[5],up[8]=down[2],down[5],down[8],back[6],back[3],back[0],up[8],up[5],up[2],front[2],front[5],front[8]
 
-void helper(String &formula) { 
-  Serial.print("Received formula: ");
-  Serial.println(formula);
-  int move = 0;
-  String tmp = "";
-  char delimiter = '+';
+    main[0],main[1],main[2],main[3],main[4],main[5],main[6],main[7],main[8]=main[6],main[3],main[0],main[7],main[4],main[1],main[8],main[5],main[2]
 
-  for (size_t i = 0; i < formula.length(); i++) {
-    char c = formula[i];
-    if (c == delimiter) {
-      move++;
-      Serial.println("Processing move:");
-      Serial.println(tmp);
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print(tmp);
-      lcd.setCursor(0, 1);
-      lcd.print("Move no.");
-      lcd.print(move);
-      execute(tmp);
-      tmp = "";
-    } else {
-      tmp += c;
-    }
-  }
+def revrotate(side):
+    main=state[side]
+    front=state['front']
+    left=state['left']
+    right=state['right']
+    up=state['up']
+    down=state['down']
+    back=state['back']
+    
+    if side=='front':
+        left[2],left[5],left[8],up[6],up[7],up[8],right[0],right[3],right[6],down[0],down[1],down[2]=up[8],up[7],up[6],right[0],right[3],right[6],down[2],down[1],down[0],left[2],left[5],left[8]
+    elif side=='up':
+        left[0],left[1],left[2],back[0],back[1],back[2],right[0],right[1],right[2],front[0],front[1],front[2]=back[0],back[1],back[2],right[0],right[1],right[2],front[0],front[1],front[2],left[0],left[1],left[2]
+    elif side=='down':
+        left[6],left[7],left[8],back[6],back[7],back[8],right[6],right[7],right[8],front[6],front[7],front[8]=front[6],front[7],front[8],left[6],left[7],left[8],back[6],back[7],back[8],right[6],right[7],right[8]
+    elif side=='back':
+        left[0],left[3],left[6],up[0],up[1],up[2],right[2],right[5],right[8],down[6],down[7],down[8]=down[6],down[7],down[8],left[6],left[3],left[0],up[0],up[1],up[2],right[8],right[5],right[2] 
+    elif side=='left':
+        front[0],front[3],front[6],down[0],down[3],down[6],back[2],back[5],back[8],up[0],up[3],up[6]=down[0],down[3],down[6],back[8],back[5],back[2],up[0],up[3],up[6],front[0],front[3],front[6]
+    elif side=='right':
+        front[2],front[5],front[8],down[2],down[5],down[8],back[0],back[3],back[6],up[2],up[5],up[8]=up[2],up[5],up[8],front[2],front[5],front[8],down[8],down[5],down[2],back[6],back[3],back[0]
 
-  
-  if (tmp.length() > 0) {
-    Serial.println("Processing final move:");
-    Serial.println(tmp);
-    lcd.clear();
-    lcd.setCursor(0, 0);
-    lcd.print(tmp);
-    lcd.setCursor(0, 1);
-    move++;      
-    lcd.print("Move no.");
-    lcd.print(move);
-    execute(tmp);
-  }
-}
+    main[0],main[1],main[2],main[3],main[4],main[5],main[6],main[7],main[8]=main[2],main[5],main[8],main[1],main[4],main[7],main[0],main[3],main[6]
 
 
-void loop() {
-  buttonState = digitalRead(buttonPin);  
+def solve(state):
+    raw=''
+    for i in state:
+        for j in state[i]:
+            raw+=sign_conv[j]
+    print("answer:",Cube.solve(raw))
+    return Cube.solve(raw)
 
- 
-  if (buttonState == LOW && lastButtonState == HIGH) {
-    delay(50);  
-    if (digitalRead(buttonPin) == LOW) {  
-      patternNumber++;
-      if (patternNumber > 5) {
-        patternNumber = 1;  
-      }
+def color_detect(h,s,v):
+    # print(h,s,v)
+    if h < 5 and s>5 :
+        return 'red'
+    elif h <10 and h>=3:
+        return 'orange'
+    elif h <= 100 and s<10 and v<255:
+        return 'white'
+    elif h <= 25 and h>10:
+        return 'yellow'
+    elif h>=36 and h<= 85 and s>100 and v<200:
+        return 'green'
+    elif h <= 150 and s>70:
+        return 'blue'
+    
 
-      
-      lcd.clear();
-      lcd.setCursor(0, 0);
-      lcd.print("Pattern ");
-      lcd.print(patternNumber);
+    return 'red'
 
-     
-      Serial.print("Pattern ");
-      Serial.println(patternNumber);
-    }
-  }
+def draw_stickers(frame,stickers,name):
+        for x,y in stickers[name]:
+            cv2.rectangle(frame, (x,y), (x+30, y+30), (255,255,255), 2)
 
-  lastButtonState = buttonState;  
-  if (Serial.available() > 0) {
-    String formula = Serial.readString();
-    Serial.println("Serial data received: " + formula);
-    helper(formula);
-  }
-}
+def draw_preview_stickers(frame,stickers):
+        stick=['front','back','left','right','up','down']
+        for name in stick:
+            for x,y in stickers[name]:
+                cv2.rectangle(frame, (x,y), (x+40, y+40), (255,255,255), 2)
+
+def texton_preview_stickers(frame,stickers):
+        stick=['front','back','left','right','up','down']
+        for name in stick:
+            for x,y in stickers[name]:
+                sym,x1,y1=textPoints[name][0][0],textPoints[name][0][1],textPoints[name][0][2]
+                cv2.putText(preview, sym, (x1,y1), font,1,(0, 0, 0), 1, cv2.LINE_AA)  
+                sym,col,x1,y1=textPoints[name][1][0],textPoints[name][1][1],textPoints[name][1][2],textPoints[name][1][3]             
+                cv2.putText(preview, sym, (x1,y1), font,0.5,col, 1, cv2.LINE_AA)  
+
+def fill_stickers(frame,stickers,sides):    
+    for side,colors in sides.items():
+        num=0
+        for x,y in stickers[side]:
+            cv2.rectangle(frame,(x,y),(x+40,y+40),color[colors[num]],-1)
+            num+=1
+
+def process(operation):
+    replace={
+                "F":[rotate,'front'],
+                "F2":[rotate,'front','front'],
+                "F'":[revrotate,'front'],
+                "U":[rotate,'up'],
+                "U2":[rotate,'up','up'],
+                "U'":[revrotate,'up'],
+                "L":[rotate,'left'],
+                "L2":[rotate,'left','left'],
+                "L'":[revrotate,'left'],
+                "R":[rotate,'right'],
+                "R2":[rotate,'right','right'],
+                "R'":[revrotate,'right'],
+                "D":[rotate,'down'],
+                "D2":[rotate,'down','down'],
+                "D'":[revrotate,'down'],
+                "B":[rotate,'back'],
+                "B2":[rotate,'back','back'],
+                "B'":[revrotate,'back']           
+    }    
+    a=0
+    for i in operation:
+        for j in range(len(replace[i])-1):
+            replace[i][0](replace[i][j+1])
+        cv2.putText(preview, i, (700,a+50), font,1,(0,255,0), 1, cv2.LINE_AA)  
+        fill_stickers(preview,stickers,state)
+        solution.append(preview)
+        cv2.imshow('solution',preview)
+        cv2.waitKey()
+        cv2.putText(preview, i, (700,50), font,1,(0,0,0), 1, cv2.LINE_AA)  
+        
+if __name__=='__main__':
+
+    preview = np.zeros((700,800,3), np.uint8)
+
+    while True:
+        hsv=[]
+        current_state=[]
+        ret,img=cap.read()
+        # img=cv2.flip(img,1)
+        frame = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+        mask = np.zeros(frame.shape, dtype=np.uint8)   
+
+        draw_stickers(img,stickers,'main')
+        draw_stickers(img,stickers,'current')
+        draw_preview_stickers(preview,stickers)
+        fill_stickers(preview,stickers,state)
+        texton_preview_stickers(preview,stickers)
+
+        for i in range(9):
+            hsv.append(frame[stickers['main'][i][1]+10][stickers['main'][i][0]+10])
+        
+        a=0
+        for x,y in stickers['current']:
+            color_name=color_detect(hsv[a][0],hsv[a][1],hsv[a][2])
+            cv2.rectangle(img,(x,y),(x+30,y+30),color[color_name],-1)
+            a+=1
+            current_state.append(color_name)
+        
+        k = cv2.waitKey(5) & 0xFF
+        if k == 27:
+            break
+        elif k ==ord('u'):
+            state['up']=current_state
+            check_state.append('u')
+        elif k ==ord('r'):
+            check_state.append('r')
+            state['right']=current_state
+        elif k ==ord('l'):
+            check_state.append('l')
+            state['left']=current_state
+        elif k ==ord('d'):
+            check_state.append('d')
+            state['down']=current_state       
+        elif k ==ord('f'):
+            check_state.append('f')
+            state['front']=current_state       
+        elif k ==ord('b'):
+            check_state.append('b')
+            state['back']=current_state       
+        elif k == ord('\r'):
+            # process(["R","R'"])
+            if len(set(check_state))==6:    
+                try:
+                    solved=solve(state)
+                    if solved:
+                        operation=solved.split(' ')
+                        process(operation)
+                except:
+                    print("error in side detection ,you may do not follow sequence or some color not detected well.Try again")
+            else:
+                print("all side are not scanned check other window for finding which left to be scanned?")
+                print("left to scan:",6-len(set(check_state)))
+        cv2.imshow('preview',preview)
+        cv2.imshow('frame',img[0:500,0:500])
+
+    cv2.destroyAllWindows()
