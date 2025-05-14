@@ -1,0 +1,23 @@
+from magiccube import Cube
+
+# Initialize a solved 3x3x3 cube
+cube = Cube(3)
+
+# Define the "Anaconda" pattern algorithm
+anaconda_moves = "L U B' U' R L' B R' F B' D R D' F'"
+
+# Define the "Cube in a Cube" pattern algorithm
+cube_in_cube_moves = "F L F U' R U F2 L2 U' L' B D' B' L2 U"
+
+# Apply the "Anaconda" pattern
+cube.rotate(anaconda_moves)
+print("Anaconda Pattern Applied:")
+print(cube)
+
+# Reset the cube to solved state
+cube = Cube(3)
+
+# Apply the "Cube in a Cube" pattern
+cube.rotate(cube_in_cube_moves)
+print("\nCube in a Cube Pattern Applied:")
+print(cube)
