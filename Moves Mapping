@@ -1,0 +1,34 @@
+move_mapping = {
+    'U': 'up_clock',
+    "U'": 'up_anticlock',
+    'D': 'down_clock',
+    "D'": 'down_anticlock',
+    'L': 'left_up',
+    "L'": 'left_down',
+    'R': 'right_up',
+    "R'": 'right_down',
+    'F': 'front_clock',
+    "F'": 'front_anticlock',
+    'B': 'back_clock',
+    "B'": 'back_anticlock'
+}
+
+def convert_moves(input_moves):
+    moves = input_moves.split()
+    converted_moves = []
+
+    for move in moves:
+        if len(move) > 1 and move[1] == '2':
+            base_move = move[0]
+            if len(move) == 3 and move[2] == "'":
+                converted_moves.append(move_mapping[base_move + "'"] + '_twice')
+            else:
+                converted_moves.append(move_mapping[base_move] + '_twice')
+        else:
+            converted_moves.append(move_mapping[move])
+
+    return ' + '.join(converted_moves)
+
+input_code = "U2 B R2' D R U' F2 B2 R' U' F R2 F2 R2 U2 R2 B2 R2 D2 L2"
+converted_code = convert_moves(input_code)
+print(converted_code)
