@@ -1,0 +1,48 @@
+import kociemba
+#urfdlb order of kociemba and GRBOWY-> FRBLUD in website we put in this format
+cube_state = "UUUUUUUUUBBBRRRRRRRRRFFFFFFDDDDDDDDDFFFLLLLLLLLLBBBBBB"
+
+a=kociemba.solve(cube_state)
+print(a)
+
+def convert_colors_to_faces(colors):
+    
+    color_to_face = {
+        'G': 'F',  
+        'R': 'R',  
+        'B': 'B', 
+        'O': 'L',  
+        'W': 'U', 
+        'Y': 'D'   
+    }
+    
+    
+    faces = ''.join(color_to_face[color] for color in colors)
+    return faces
+
+
+
+
+number_to_color = {
+    '0': 'G',
+    '1': 'R',
+    '2': 'Y',
+    '3': 'W',
+    '4': 'B',
+    '5': 'O'
+}
+
+def convert_numbers_to_colors(input_string):
+    return ''.join(number_to_color[char] for char in input_string)
+
+
+input_string = "001101414110010000545545555454454141333333333222222222"
+
+output_string = convert_numbers_to_colors(input_string)
+converted_faces = convert_colors_to_faces(output_string)
+print("Converted faces:", converted_faces)
+
+
+cube_state = converted_faces
+a=kociemba.solve(cube_state)
+print(a)
